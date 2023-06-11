@@ -33,6 +33,7 @@ let apiModel: ApiModel
 const model = isNotEmptyString(process.env.OPENAI_API_MODEL) ? process.env.OPENAI_API_MODEL : 'gpt-3.5-turbo'
 
 let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+let azureClient
 
 if (process.env.USE_AZURE !== 'true') {
   if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.env.OPENAI_ACCESS_TOKEN)) {
@@ -86,6 +87,8 @@ if (process.env.USE_AZURE !== 'true') {
       apiModel = 'ChatGPTUnofficialProxyAPI'
     }
   })()
+} else {
+  azureClient = new OpenAIClient(AZURE_API_URL, new AzureKeyCredential(AZURE_API_KEY));
 }
 
 async function chatReplyProcess(options: RequestOptions) {
@@ -113,11 +116,17 @@ async function chatReplyProcess(options: RequestOptions) {
     //   },
     // })
 
-    const client = new OpenAIClient(AZURE_API_URL, new AzureKeyCredential(AZURE_API_KEY));
     const deploymentId = "gpt35";
-    const response = await client.getChatCompletions(deploymentId, [{role: "user", content: message }]);
+    // const response = await azureClient.getChatCompletions(deploymentId, [{role: "user", content: message }]);
+    const events = await azureClient.listChatCompletions(deploymentId, [{role: "user", content: message }], { maxTokens: 128 });
 
-    return sendResponse({ type: 'Success', data: response })
+    for await (const event of events) {
+      for (const choice of event.choices) {
+        process(choice.delta?.content)
+      }
+    }
+
+    // return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
     const code = error.statusCode
