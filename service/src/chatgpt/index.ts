@@ -121,9 +121,10 @@ async function chatReplyProcess(options: RequestOptions) {
     const events = await azureClient.listChatCompletions(deploymentId, [{role: "user", content: message }], { maxTokens: 128 });
 
     for await (const event of events) {
-      for (const choice of event.choices) {
-        process(choice)
-      }
+      process(event)
+      // for (const choice of event.choices) {
+      // 	process(event)
+      // }
     }
 
     // return sendResponse({ type: 'Success', data: response })

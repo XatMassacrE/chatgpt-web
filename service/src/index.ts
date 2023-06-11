@@ -53,13 +53,15 @@ router.post('/chat-sse', [auth, limiter], async (req, res) => {
           csid: chat.conversationId || csid || ncsid,
           pmid: chat.parentMessageId,
           delta: chat.delta,
+	  choices: chat.choices,
           // The other fields are not needed at the moment.
         }
+
         if (!chat.delta && chat.text)
           message.text = chat.text
 
-        if (chat.detail && chat.detail.choices.length > 0 && chat.detail.choices[0].finish_reason)
-          message.finishReason = chat.detail.choices[0].finish_reason
+        if (chat && chat.choices.length > 0 && chat.choices[0].finishReason)
+          message.finishReason = chat.choices[0].finishReason
 
         writeServerSendEvent(res, JSON.stringify(message))
       },
