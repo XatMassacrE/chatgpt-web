@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
+import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
 import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
@@ -100,12 +101,16 @@ async function chatReplyProcess(options: RequestOptions) {
         options = { ...lastContext }
     }
 
-    const response = await api.sendMessage(message, {
-      ...options,
-      onProgress: (partialResponse) => {
-        process?.(partialResponse)
-      },
-    })
+    // const response = await api.sendMessage(message, {
+    //   ...options,
+    //   onProgress: (partialResponse) => {
+    //     process?.(partialResponse)
+    //   },
+    // })
+
+    const client = new OpenAIClient(process.env.AZURE_API_URL, new AzureKeyCredential(process.env.AZURE_API_KEY));
+    const deploymentId = "gpt35";
+    const response = await client.getChatCompletions(deploymentId, [{role: "user", content: message }]);
 
     return sendResponse({ type: 'Success', data: response })
   }
