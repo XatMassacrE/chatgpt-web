@@ -26,6 +26,8 @@ const ErrorCodeMessage: Record<string, string> = {
 
 const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 100 * 1000
 const disableDebug: boolean = process.env.OPENAI_API_DISABLE_DEBUG === 'true'
+const AZURE_API_URL = process.env.AZURE_API_URL
+const AZURE_API_KEY = process.env.AZURE_API_KEY
 
 let apiModel: ApiModel
 const model = isNotEmptyString(process.env.OPENAI_API_MODEL) ? process.env.OPENAI_API_MODEL : 'gpt-3.5-turbo'
@@ -111,7 +113,7 @@ async function chatReplyProcess(options: RequestOptions) {
     //   },
     // })
 
-    const client = new OpenAIClient(process.env.AZURE_API_URL, new AzureKeyCredential(process.env.AZURE_API_KEY));
+    const client = new OpenAIClient(AZURE_API_URL, new AzureKeyCredential(AZURE_API_KEY));
     const deploymentId = "gpt35";
     const response = await client.getChatCompletions(deploymentId, [{role: "user", content: message }]);
 
