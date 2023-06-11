@@ -1,11 +1,21 @@
 import type { FetchFn } from 'chatgpt'
 
 export interface RequestProps {
+  csid?: string
   prompt: string
   options?: ChatContext
   systemMessage: string
   temperature?: number
   top_p?: number
+}
+
+export interface StreamMessage {
+  id: string
+  csid?: string
+  pmid?: string
+  delta: string
+  text?: string
+  finishReason?: string
 }
 
 export interface ChatContext {

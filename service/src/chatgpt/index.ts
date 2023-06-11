@@ -122,7 +122,7 @@ async function chatReplyProcess(options: RequestOptions) {
 
     for await (const event of events) {
       for (const choice of event.choices) {
-        process(choice.delta?.content)
+        process(choice)
       }
     }
 
