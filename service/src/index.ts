@@ -101,17 +101,17 @@ router.post('/chat-sse', [auth, limiter], async (req, res) => {
     // }
   
     if (openaiResponse.status >= 200 && openaiResponse.status < 300) {
-      res.status(openaiResponse.status)
+      // res.status(openaiResponse.status)
       handleStreamResponse(res, openaiResponse.data)
     } else {
-      res.status(openaiResponse.status).send(openaiResponse.data)
+      // res.status(openaiResponse.status).send(openaiResponse.data)
     }
   }
   catch (error) {
     res.write(JSON.stringify(error))
   }
   finally {
-    res.end()
+    // res.end()
   }
 })
 
