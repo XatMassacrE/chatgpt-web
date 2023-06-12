@@ -73,6 +73,7 @@ export function fetchChatStream(
     const cr = JSON.parse(e.data)
     if (cr.choices && cr.choices.length > 0) // for old response
       cr.delta = cr.choices[0].delta.content
+      cr.finishReason = cr.choices[0].finish_reason
 
     if (csid && !cr.csid)
       cr.csid = csid
