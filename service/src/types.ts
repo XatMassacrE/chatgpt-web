@@ -11,6 +11,7 @@ export interface RequestProps {
 
 export interface StreamMessage {
   id: string
+  choices: any;
   csid?: string
   pmid?: string
   delta: string
